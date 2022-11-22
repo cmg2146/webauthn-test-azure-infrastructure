@@ -1,0 +1,31 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+
+name: $(Date:yyyy.MM.dd).$(Rev:r)
+
+variables:
+  azureServiceConnection: 'sw-development-connection'
+  resourceGroupName: 'webauthn-test'
+  sharedResourceGroupName: 'shared'
+  location: 'eastus'
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'Deploy WebAuthn-Test Infrastructure'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: $(azureServiceConnection)
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
+    csmFile: './main.bicep'
+    overrideParameters: >
+      -sharedResoureGroupName $(sharedResourceGroupName)
+    deploymentMode: 'Incremental'
+    deploymentName: webauthn-test-$(Build.BuildNumber)
