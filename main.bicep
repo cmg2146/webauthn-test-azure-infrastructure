@@ -128,7 +128,7 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = {
     version: '12.0'
     publicNetworkAccess: 'Enabled'
     administrators: {
-      //NOTE: Not a good practice to make the app service identity a server admin
+      //TODO: Not a good practice to make the app service identity a server admin, change this
       administratorType: 'ActiveDirectory'
       azureADOnlyAuthentication: true
       principalType: 'Application'
