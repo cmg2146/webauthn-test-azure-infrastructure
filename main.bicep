@@ -178,7 +178,7 @@ resource apiAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
   properties: {
     ASPNETCORE_ENVIRONMENT: 'Production'
     WEB_URL: 'https://${webAppService.properties.defaultHostName}'
-    AZURE_KEY_VAULT_ID: keyVault.id
+    AZURE_KEY_VAULT_ID: keyVault.properties.vaultUri
   }
 }
 
