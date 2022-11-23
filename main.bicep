@@ -79,7 +79,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
   properties: {
-    publicNetworkAccess: 'disabled'
     enabledForDeployment: false
     enabledForTemplateDeployment: false
     enabledForDiskEncryption: false
@@ -93,7 +92,9 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
         tenantId: subscription().tenantId
         permissions: {
           keys: [
-            'all'
+            'get'
+            'wrapKey'
+            'unwrapKey'
           ]
         }
       }
