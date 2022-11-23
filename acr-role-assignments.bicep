@@ -1,16 +1,16 @@
 targetScope = 'resourceGroup'
 
+@description('The name of the Container Registry to pull images from')
 param containerRegistryName string = 'cmgdev'
 
-param webAppServiceName string
+@description('Specifies the name of the UI/frontend app service.')
+param webAppServiceName string = 'webauthn-test'
 
-@description('Principal Id of the Managed Service Identity for the Web App Service')
-param webAppServicePrincipalId string
+@description('Specifies the name of the API app service.')
+param apiAppServiceName string = 'webauthn-test-api'
 
-param apiAppServiceName string
-
-@description('Principal Id of the Managed Service Identity for the API App Service')
-param apiAppServicePrincipalId string
+@description('Specifies the name of the resource group containing the Web and API app services.')
+param appServicesResourceGroup string = 'webauthn-test'
 
 // Give the app service apps access to pull images from the ACR
 var acrPullRole = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
@@ -19,11 +19,21 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2022-02-01-pr
   name: containerRegistryName
 }
 
+resource webAppService 'Microsoft.Web/sites@2022-03-01' existing = {
+  name: webAppServiceName
+  scope: resourceGroup(appServicesResourceGroup)
+}
+
+resource apiAppService 'Microsoft.Web/sites@2022-03-01' existing = {
+  name: apiAppServiceName
+  scope: resourceGroup(appServicesResourceGroup)
+}
+
 resource webAcrPullAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(webAppServiceName)
   scope: containerRegistry
   properties: {
-    principalId: webAppServicePrincipalId
+    principalId: webAppService.identity.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: acrPullRole
   }
@@ -33,7 +43,7 @@ resource apiAcrPullAssignment 'Microsoft.Authorization/roleAssignments@2022-04-0
   name: guid(apiAppServiceName)
   scope: containerRegistry
   properties: {
-    principalId: apiAppServicePrincipalId
+    principalId: apiAppService.identity.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: acrPullRole
   }

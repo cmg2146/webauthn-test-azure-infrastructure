@@ -3,12 +3,6 @@ targetScope = 'resourceGroup'
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
-@description('The name of the Container Registry to pull images from')
-param containerRegistryName string = 'cmgdev'
-
-@description('Name of the common resource group for shared resources')
-param sharedResoureGroupName string
-
 @description('The name of the SQL logical server.')
 param sqlServerName string = 'webauthn-test-sql'
 
@@ -75,23 +69,11 @@ resource apiAppService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-//Allow app services to pull images from ACR
-module acrRoleAssignmentsModule 'modules/acr-role-assignments.bicep' = {
-  scope: resourceGroup(sharedResoureGroupName)
-  name: 'acrRoleAssignmentsModule'
-  params: {
-    containerRegistryName: containerRegistryName
-    webAppServiceName: webAppService.name
-    webAppServicePrincipalId: webAppService.identity.principalId
-    apiAppServiceName: apiAppService.name
-    apiAppServicePrincipalId: apiAppService.identity.principalId
-  }
-}
-
 resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
   properties: {
+    publicNetworkAccess: 'disabled'
     enabledForDeployment: false
     enabledForTemplateDeployment: false
     enabledForDiskEncryption: false
