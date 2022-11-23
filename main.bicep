@@ -38,6 +38,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 resource webAppService 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppServiceName
   location: location
+  kind: 'app,linux,container'
   identity: {
     type: 'SystemAssigned'
   }
@@ -45,6 +46,7 @@ resource webAppService 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: appServicePlan.id
     httpsOnly: true
     siteConfig: {
+      linuxFxVersion: ''
       acrUseManagedIdentityCreds: true
       http20Enabled: true
       minTlsVersion: '1.2'
@@ -55,6 +57,7 @@ resource webAppService 'Microsoft.Web/sites@2022-03-01' = {
 resource apiAppService 'Microsoft.Web/sites@2022-03-01' = {
   name: apiAppServiceName
   location: location
+  kind: 'app,linux,container'
   identity: {
     type: 'SystemAssigned'
   }
@@ -62,6 +65,7 @@ resource apiAppService 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: appServicePlan.id
     httpsOnly: true
     siteConfig: {
+      linuxFxVersion: ''
       acrUseManagedIdentityCreds: true
       http20Enabled: true
       minTlsVersion: '1.2'
@@ -151,8 +155,16 @@ resource sqlFirewallRules 'Microsoft.Sql/servers/firewallRules@2021-11-01' = {
   }
 }
 
-//configure api app settings and connection strings. Note: The web app does not
-//use app settings because it is a static site with settings populated at build time.
+//configure app settings and connection strings.
+resource webAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
+  name: 'appsettings'
+  kind: 'string'
+  parent: webAppService
+  properties: {
+    API_URL: 'https://${apiAppService.properties.defaultHostName}'
+  }
+}
+
 resource apiAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
   name: 'appsettings'
   kind: 'string'
