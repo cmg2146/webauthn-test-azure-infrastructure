@@ -122,13 +122,13 @@ resource apiDataprotectionKey 'Microsoft.KeyVault/vaults/keys@2021-11-01-preview
       enabled: true
       exportable: false
     }
-    curveName: 'P-256'
+    curveName: 'P-521'
     keyOps: [
       'wrapKey'
       'unwrapKey'
     ]
     keySize: 2048
-    kty: 'RSA-HSM'
+    kty: 'RSA'
     rotationPolicy: {
       attributes: {
         expiryTime: 'P30D'
