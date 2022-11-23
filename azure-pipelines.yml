@@ -9,7 +9,6 @@ name: $(Date:yyyy.MM.dd).$(Rev:r)
 variables:
   azureServiceConnection: 'sw-development-connection'
   resourceGroupName: 'webauthn-test'
-  sharedResourceGroupName: 'shared'
   location: 'eastus'
 
 pool:
@@ -25,7 +24,5 @@ steps:
     resourceGroupName: $(resourceGroupName)
     location: $(location)
     csmFile: './main.bicep'
-    overrideParameters: >
-      -sharedResoureGroupName $(sharedResourceGroupName)
     deploymentMode: 'Incremental'
     deploymentName: webauthn-test-$(Build.BuildNumber)
