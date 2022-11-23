@@ -45,8 +45,11 @@ resource webAppService 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    clientAffinityEnabled: false
     siteConfig: {
-      linuxFxVersion: ''
+      //default docker image is overwritten on first code deployment
+      linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
+      ftpsState: 'FtpsOnly'
       acrUseManagedIdentityCreds: true
       http20Enabled: true
       minTlsVersion: '1.2'
@@ -64,8 +67,11 @@ resource apiAppService 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    clientAffinityEnabled: false
     siteConfig: {
-      linuxFxVersion: ''
+      //default docker image is overwritten on first code deployment
+      linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
+      ftpsState: 'FtpsOnly'
       acrUseManagedIdentityCreds: true
       http20Enabled: true
       minTlsVersion: '1.2'
