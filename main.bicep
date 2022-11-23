@@ -12,6 +12,9 @@ param sqlDatabaseName string = 'WebAuthnTest'
 @description('Specifies the name of the key vault.')
 param keyVaultName string = 'webauthn-test-vault'
 
+@description('Specifies the name of the key vault.')
+param apiDataProtectionKeyName string = 'webauthn-test-api-dataprotection'
+
 @description('Specifies the name of the app service plan.')
 param appServicePlanName string = 'webauthn-test-app-plan'
 
@@ -79,6 +82,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   name: keyVaultName
   location: location
   properties: {
+    publicNetworkAccess: 'Enabled'
     enabledForDeployment: false
     enabledForTemplateDeployment: false
     enabledForDiskEncryption: false
@@ -106,6 +110,39 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
     networkAcls: {
       defaultAction: 'Allow'
       bypass: 'AzureServices'
+    }
+  }
+}
+
+resource apiDataprotectionKey 'Microsoft.KeyVault/vaults/keys@2021-11-01-preview' = {
+  name: apiDataProtectionKeyName
+  parent: keyVault
+  properties: {
+    attributes: {
+      enabled: true
+      exportable: false
+    }
+    curveName: 'P-256'
+    keyOps: [
+      'wrapKey'
+      'unwrapKey'
+    ]
+    keySize: 2048
+    kty: 'RSA-HSM'
+    rotationPolicy: {
+      attributes: {
+        expiryTime: 'P30D'
+      }
+      lifetimeActions: [
+        { 
+          action: {
+            type: 'rotate'
+          }
+          trigger: {
+            timeBeforeExpiry: 'P7D'
+          }
+        }
+      ]
     }
   }
 }
@@ -175,7 +212,7 @@ resource apiAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
   properties: {
     ASPNETCORE_ENVIRONMENT: 'Production'
     WEB_URL: 'https://${webAppService.properties.defaultHostName}'
-    AZURE_KEY_VAULT_ID: '${keyVault.properties.vaultUri}keys/${apiAppServiceName}-dataprotection/'
+    AZURE_KEY_VAULT_ID: '${keyVault.properties.vaultUri}keys/${apiDataProtectionKeyName}/'
   }
 }
 
