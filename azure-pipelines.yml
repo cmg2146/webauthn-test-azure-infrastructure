@@ -3,6 +3,9 @@ trigger:
   branches:
     include:
     - main
+  paths:
+    exclude:
+    - README.md
 
 name: $(Date:yyyy.MM.dd).$(Rev:r)
 
