@@ -6,6 +6,7 @@ trigger:
   paths:
     exclude:
     - README.md
+    - .vscode
 
 name: $(Date:yyyy.MM.dd).$(Rev:r)
 
