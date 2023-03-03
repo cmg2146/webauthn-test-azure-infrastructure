@@ -11,9 +11,7 @@ trigger:
 name: $(Date:yyyy.MM.dd).$(Rev:r)
 
 variables:
-  azureServiceConnection: 'sw-development-connection'
-  resourceGroupName: 'webauthn-test'
-  location: 'eastus'
+- group: webauthn-test-azure-infrastructure_Production
 
 pool:
   vmImage: ubuntu-latest
@@ -23,10 +21,20 @@ steps:
   displayName: 'Deploy WebAuthn-Test Infrastructure'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: $(azureServiceConnection)
+    azureResourceManagerConnection: $(AZURE_SERVICE_CONNECTION)
     action: 'Create Or Update Resource Group'
-    resourceGroupName: $(resourceGroupName)
-    location: $(location)
+    resourceGroupName: $(RESOURCE_GROUP_NAME)
+    location: $(RESOURCE_GROUP_LOCATION)
     csmFile: './main.bicep'
+    overrideParameters: >
+      -sqlServerName $(SQL_SERVER_NAME)
+      -sqlDatabaseName $(SQL_DATABASE_NAME)
+      -keyVaultName $(KEY_VAULT_NAME)
+      -apiDataProtectionKeyName $(API_DATAPROTECTION_KEY_NAME)
+      -appServicePlanName $(APP_SERVICE_PLAN_NAME)
+      -appServicePlanTier $(APP_SERVICE_PLAN_TIER)
+      -appServicePlanSku $(APP_SERVICE_PLAN_SKU)
+      -webAppServiceName $(WEB_APP_SERVICE_NAME)
+      -apiAppServiceName $(API_APP_SERVICE_NAME)
     deploymentMode: 'Incremental'
     deploymentName: webauthn-test-$(Build.BuildNumber)

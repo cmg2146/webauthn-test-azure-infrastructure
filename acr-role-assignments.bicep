@@ -1,16 +1,16 @@
 targetScope = 'resourceGroup'
 
 @description('The name of the Container Registry to pull images from')
-param containerRegistryName string = 'cmgdev'
-
-@description('Specifies the name of the UI/frontend app service.')
-param webAppServiceName string = 'webauthn-test'
-
-@description('Specifies the name of the API app service.')
-param apiAppServiceName string = 'webauthn-test-api'
+param containerRegistryName string
 
 @description('Specifies the name of the resource group containing the Web and API app services.')
-param appServicesResourceGroup string = 'webauthn-test'
+param appServicesResourceGroup string
+
+@description('Specifies the name of the UI/frontend app service.')
+param webAppServiceName string
+
+@description('Specifies the name of the API app service.')
+param apiAppServiceName string
 
 // Give the app service apps access to pull images from the ACR
 var acrPullRole = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')

@@ -4,33 +4,39 @@ targetScope = 'resourceGroup'
 param location string = resourceGroup().location
 
 @description('The name of the SQL logical server.')
-param sqlServerName string = 'webauthn-test-sql'
+param sqlServerName string
 
 @description('The name of the SQL Database.')
-param sqlDatabaseName string = 'WebAuthnTest'
+param sqlDatabaseName string
 
 @description('Specifies the name of the key vault.')
-param keyVaultName string = 'webauthn-test-vault'
+param keyVaultName string
 
 @description('Specifies the name of the key vault.')
-param apiDataProtectionKeyName string = 'webauthn-test-api-dataprotection'
+param apiDataProtectionKeyName string
 
 @description('Specifies the name of the app service plan.')
-param appServicePlanName string = 'webauthn-test-app-plan'
+param appServicePlanName string
+
+@description('Specifies the name of the app service plan tier.')
+param appServicePlanTier string
+
+@description('Specifies the name of the app service plan SKU.')
+param appServicePlanSku string
 
 @description('Specifies the name of the UI/frontend app service.')
-param webAppServiceName string = 'webauthn-test'
+param webAppServiceName string
 
 @description('Specifies the name of the API app service.')
-param apiAppServiceName string = 'webauthn-test-api'
+param apiAppServiceName string
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
   kind: 'linux'
   sku: {
-    tier: 'Free'
-    name: 'F1'
+    tier: appServicePlanTier
+    name: appServicePlanSku
   }
   properties: {
     reserved: true
