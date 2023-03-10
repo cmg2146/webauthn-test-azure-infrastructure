@@ -18,7 +18,7 @@ General Variables:
 * RESOURCE_GROUP_NAME
   * The name of the resource group to create (or apply updates to if already created).
 * RESOURCE_GROUP_LOCATION
-  * The location of the resource group (ignored after resource group is created).
+  * The Azure region to create the resource group in (ignored after resource group is created).
 
 Azure SQL Database:
 * SQL_SERVER_NAME
