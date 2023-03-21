@@ -160,9 +160,11 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = {
     version: '12.0'
     publicNetworkAccess: 'Enabled'
     administrators: {
-      //TODO: Not a good practice to make the app service identity a server admin, change this
       administratorType: 'ActiveDirectory'
       azureADOnlyAuthentication: true
+      // TODO: It is a bad practice to make the app identity a server admin, like below. For a real app,
+      // this should never be done - a separate AD account should be the server admin and the app identity
+      // should be given access only to necessary databases and with only necessary permissions.     
       principalType: 'Application'
       login: apiAppService.name
       tenantId: apiAppService.identity.tenantId
@@ -198,38 +200,5 @@ resource sqlFirewallRules 'Microsoft.Sql/servers/firewallRules@2021-11-01' = {
   properties: {
     endIpAddress: '0.0.0.0'
     startIpAddress: '0.0.0.0'
-  }
-}
-
-//configure app settings and connection strings.
-resource webAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
-  name: 'appsettings'
-  kind: 'string'
-  parent: webAppService
-  properties: {
-    API_URL: 'https://${apiAppService.properties.defaultHostName}'
-  }
-}
-
-resource apiAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
-  name: 'appsettings'
-  kind: 'string'
-  parent: apiAppService
-  properties: {
-    ASPNETCORE_ENVIRONMENT: 'Production'
-    WEB_URL: 'https://${webAppService.properties.defaultHostName}'
-    AZURE_KEY_VAULT_ID: '${keyVault.properties.vaultUri}keys/${apiDataProtectionKeyName}/'
-  }
-}
-
-resource apiConnectionStrings 'Microsoft.Web/sites/config@2022-03-01' = {
-  name: 'connectionstrings'
-  kind: 'string'
-  parent: apiAppService
-  properties: {
-    Default: {
-      type: 'SQLAzure'
-      value: 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabaseName};MultipleActiveResultSets=True;Authentication=Active Directory Managed Identity;TrustServerCertificate=False;Encrypt=True'
-    }
   }
 }

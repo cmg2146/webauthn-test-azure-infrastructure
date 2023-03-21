@@ -47,6 +47,4 @@ Azure App Services:
 Note: All resources will be created in the same Azure region the resource group is in.
 
 ## Notes
-* TODO: Change database server admin to another AD user. Set API app service identity permissions to minimum required on database only.
-* TODO: Remove app settings from bicep
 * TODO: Setup a VNet
