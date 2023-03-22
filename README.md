@@ -47,4 +47,9 @@ Azure App Services:
 Note: All resources will be created in the same Azure region the resource group is in.
 
 ## Notes
-* TODO: Setup a VNet
+In an effort to use only free services under the Azure free tier, there are some shortcomings to the infrastructure.
+For example, in a production scenario, the following should be addressed:
+
+* TODO: Firewall the key vault and the SQL database. Only the API app service should have network access to these.
+A VNet or maybe something else could accomplish this.
+* TODO: Firewall the API app service to allow only traffic from the Web app service (the proxy).
